@@ -1,0 +1,49 @@
+rule NetworkControlPermission {
+  description:  "give admin ALL access to system resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.*"
+  action: ALLOW  
+}
+
+rule ParticipantRegistryControlPermission {
+  description:  "give admin ALL access to ACME participant types"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.acme.airline.participant.*"
+  action: ALLOW  
+}
+
+rule AcmeNetworkAdminPermissionSystem {
+  description: "READ access to the System resources"
+  participant: "ANY"
+  operation: READ
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule AcmeNetworkAdminPermissionAcme {
+  description: "READ access to the ACME resources"
+  participant: "org.acme.airline.participant.ACMENetworkAdmin"
+  operation: READ
+  resource: "org.acme.airline.**"
+  action: ALLOW
+}
+
+rule AcmeParticipantPermissionHistorian {
+  description: "can write HistorianRecord to the Historian"
+  participant: "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.hyperledger.composer.system.HistorianRecord"
+  action: ALLOW  
+}
+
+rule ACMEPersonnelPermission {
+  description: "only ACME personnel can create a flight"
+  participant(p): "org.acme.airline.participant.ACMEPersonnel"
+  operation: CREATE
+  resource: "org.acme.airline.flight.*"
+  transaction: "org.acme.airline.flight.CreateFlight"
+  condition: (p.department=='Logistics')
+  action: ALLOW
+}
